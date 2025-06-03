@@ -49,19 +49,19 @@ export default function AppLayout({
       />
       <div className="drawer-content flex flex-col">
         {/* Navbar */}
-        <header className="w-full bg-base-200">
+        <header className="w-full bg-black border-b border-gray-800">
           <div className="navbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex-none lg:hidden">
               <label
                 htmlFor="sidebar-drawer"
-                className="btn btn-square btn-ghost drawer-button"
+                className="btn btn-square btn-ghost drawer-button text-white"
               >
                 <MenuIcon />
               </label>
             </div>
             <div className="flex-1">
               <Link href="/" onClick={handleLogoClick}>
-                <div className="btn btn-ghost normal-case text-2xl font-bold tracking-tight cursor-pointer">
+                <div className="btn btn-ghost normal-case text-2xl font-bold tracking-tight cursor-pointer text-white">
                   Cloudinary Showcase
                 </div>
               </Link>
@@ -70,7 +70,7 @@ export default function AppLayout({
               {user && (
                 <>
                   <div className="avatar">
-                    <div className="w-8 h-8 rounded-full">
+                    <div className="w-8 h-8 rounded-full ring-2 ring-white/30">
                       <img
                         src={user.imageUrl}
                         alt={
@@ -79,12 +79,12 @@ export default function AppLayout({
                       />
                     </div>
                   </div>
-                  <span className="text-sm truncate max-w-xs lg:max-w-md">
+                  <span className="text-sm truncate max-w-xs lg:max-w-md text-gray-300">
                     {user.username || user.emailAddresses[0].emailAddress}
                   </span>
                   <button
                     onClick={handleSignOut}
-                    className="btn btn-ghost btn-circle"
+                    className="btn btn-ghost btn-circle text-gray-300 hover:text-white"
                   >
                     <LogOutIcon className="h-6 w-6" />
                   </button>
@@ -94,7 +94,7 @@ export default function AppLayout({
           </div>
         </header>
         {/* Page content */}
-        <main className="flex-grow">
+        <main className="flex-grow bg-black">
           <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 my-8">
             {children}
           </div>
@@ -102,33 +102,33 @@ export default function AppLayout({
       </div>
       <div className="drawer-side">
         <label htmlFor="sidebar-drawer" className="drawer-overlay"></label>
-        <aside className="bg-base-200 w-64 h-full flex flex-col">
-          <div className="flex items-center justify-center py-4">
-            <ImageIcon className="w-10 h-10 text-primary" />
+        <aside className="bg-black w-64 h-full flex flex-col border-r border-gray-800">
+          <div className="flex items-center justify-center py-6">
+            <ImageIcon className="w-10 h-10 text-white" />
           </div>
-          <ul className="menu p-4 w-full text-base-content flex-grow">
+          <ul className="menu p-4 w-full text-gray-300 flex-grow">
             {sidebarItems.map((item) => (
               <li key={item.href} className="mb-2">
                 <Link
                   href={item.href}
-                  className={`flex items-center space-x-4 px-4 py-2 rounded-lg ${
+                  className={`flex items-center space-x-4 px-4 py-3 rounded-lg ${
                     pathname === item.href
-                      ? "bg-primary text-white"
-                      : "hover:bg-base-300"
+                      ? "bg-gray-800 text-white"
+                      : "hover:bg-gray-900"
                   }`}
                   onClick={() => setSidebarOpen(false)}
                 >
-                  <item.icon className="w-6 h-6" />
+                  <item.icon className="w-5 h-5" />
                   <span>{item.label}</span>
                 </Link>
               </li>
             ))}
           </ul>
           {user && (
-            <div className="p-4">
+            <div className="p-4 border-t border-gray-800">
               <button
                 onClick={handleSignOut}
-                className="btn btn-outline btn-error w-full"
+                className="btn bg-gray-900 border-gray-700 hover:bg-gray-800 text-white w-full"
               >
                 <LogOutIcon className="mr-2 h-5 w-5" />
                 Sign Out

@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react'
 import {getCldImageUrl, getCldVideoUrl} from "next-cloudinary"
-import { Download, Clock, FileDown, FileUp } from "lucide-react";
+import { Download, Clock, FileDown, FileUp, Play, ArrowDown } from "lucide-react";
 import dayjs from 'dayjs';
 import relativeTime from "dayjs/plugin/relativeTime"
 import {filesize} from "filesize"
@@ -16,6 +16,7 @@ interface VideoCardProps {
 const VideoCard: React.FC<VideoCardProps> = ({video, onDownload}) => {
     const [isHovered, setIsHovered] = useState(false);
     const [previewError, setPreviewError] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const getThumbnailUrl = useCallback((publicId: string) => {
         return getCldImageUrl({
@@ -56,7 +57,7 @@ const VideoCard: React.FC<VideoCardProps> = ({video, onDownload}) => {
                 "f_mp4",
                 "vc_auto",
                 "q_auto",
-                "e_preview:duration_4:max_seg_3:min_seg_dur_2"
+                "so_0" // Start playing from the beginning to avoid preview errors
             ]
         });
     }, [])
@@ -73,89 +74,131 @@ const VideoCard: React.FC<VideoCardProps> = ({video, onDownload}) => {
 
       const compressionPercentage = Math.round(
         (1 - Number(video.compressedSize) / Number(video.originalSize)) * 100
-      );
-
-      useEffect(() => {
+      );      useEffect(() => {
         setPreviewError(false);
+        setIsLoading(true);
       }, [isHovered]);
 
       const handlePreviewError = () => {
         setPreviewError(true);
+        setIsLoading(false);
+      };
+      
+      const handlePreviewLoad = () => {
+        setIsLoading(false);
       };
 
       return (
         <div
-          className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
+            className="overflow-hidden rounded-xl bg-black shadow-md hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1 border border-gray-800"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
         >
-          <figure className="aspect-video relative">
-            {isHovered ? (
-              previewError ? (
-                <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                  <p className="text-red-500">Preview not available</p>
+            {/* Video Preview Section */}
+            <div className="relative aspect-video bg-gradient-to-br from-gray-900 to-black overflow-hidden">
+                {/* Thumbnail or Preview */}
+                {isHovered ? (
+                    <>
+                        {isLoading && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-10">
+                                <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                            </div>
+                        )}
+                        <video
+                            src={getPreviewVideoUrl(video.publicId)}
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            className="w-full h-full object-cover transform scale-105 transition-transform duration-700"
+                            onError={handlePreviewError}
+                            onLoadedData={handlePreviewLoad}
+                        />
+                    </>
+                ) : (
+                    <>
+                        {/* Play button overlay */}
+                        <div className="absolute inset-0 flex items-center justify-center z-10">
+                            <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform border border-white/30 backdrop-blur-sm">
+                                <Play size={28} className="text-white ml-1" />
+                            </div>
+                        </div>
+                        <img
+                            src={getThumbnailUrl(video.publicId)}
+                            alt={video.title}
+                            className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                        />
+                    </>
+                )}
+
+                {/* Duration Badge */}
+                <div className="absolute bottom-3 right-3 bg-black bg-opacity-75 px-3 py-1.5 rounded-full text-white text-xs font-medium shadow flex items-center border border-gray-700">
+                    <Clock size={12} className="mr-1.5 text-gray-400" />
+                    {formatDuration(video.duration)}
                 </div>
-              ) : (
-                <video
-                  src={getPreviewVideoUrl(video.publicId)}
-                  autoPlay
-                  muted
-                  loop
-                  className="w-full h-full object-cover"
-                  onError={handlePreviewError}
-                />
-              )
-            ) : (
-              <img
-                src={getThumbnailUrl(video.publicId)}
-                alt={video.title}
-                className="w-full h-full object-cover"
-              />
-            )}
-            <div className="absolute bottom-2 right-2 bg-base-100 bg-opacity-70 px-2 py-1 rounded-lg text-sm flex items-center">
-              <Clock size={16} className="mr-1" />
-              {formatDuration(video.duration)}
-            </div>
-          </figure>
-          <div className="card-body p-4">
-            <h2 className="card-title text-lg font-bold">{video.title}</h2>
-            <p className="text-sm text-base-content opacity-70 mb-4">
-              {video.description}
-            </p>
-            <p className="text-sm text-base-content opacity-70 mb-4">
-              Uploaded {dayjs(video.createdAt).fromNow()}
-            </p>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="flex items-center">
-                <FileUp size={18} className="mr-2 text-primary" />
-                <div>
-                  <div className="font-semibold">Original</div>
-                  <div>{formatSize(Number(video.originalSize))}</div>
+
+                {/* Compression Badge */}
+                <div className="absolute top-3 left-3">
+                    <div className="px-2 py-1 rounded-md bg-gray-800 text-white text-xs font-semibold shadow-sm border border-gray-700">
+                        {compressionPercentage}% compressed
+                    </div>
                 </div>
-              </div>
-              <div className="flex items-center">
-                <FileDown size={18} className="mr-2 text-secondary" />
-                <div>
-                  <div className="font-semibold">Compressed</div>
-                  <div>{formatSize(Number(video.compressedSize))}</div>
+            </div>
+
+            {/* Content Section */}
+            <div className="p-5">
+                {/* Video Info */}
+                <div className="mb-4">
+                    <h2 className="text-lg font-bold text-white line-clamp-1 mb-1">
+                        {video.title}
+                    </h2>
+                    <p className="text-sm text-gray-300 line-clamp-2 mb-2">
+                        {video.description || "No description provided"}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                        Uploaded {dayjs(video.createdAt).fromNow()}
+                    </p>
                 </div>
-              </div>
+
+                {/* File Stats */}
+                <div className="flex items-center justify-between p-3 mb-4 bg-gray-900 rounded-lg border border-gray-800">
+                    <div className="flex items-center space-x-4">
+                        {/* Original Size */}
+                        <div className="flex flex-col">
+                            <span className="text-xs text-gray-500">Original</span>
+                            <div className="flex items-center space-x-1">
+                                <FileUp size={14} className="text-white" />
+                                <span className="text-sm font-mono text-gray-300">
+                                    {formatSize(Number(video.originalSize))}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        {/* Arrow */}
+                        <ArrowDown size={14} className="text-gray-600 rotate-270 mt-3" />
+                        
+                        {/* Compressed Size */}
+                        <div className="flex flex-col">
+                            <span className="text-xs text-gray-500">Compressed</span>
+                            <div className="flex items-center space-x-1">
+                                <FileDown size={14} className="text-white" />
+                                <span className="text-sm font-mono text-gray-300">
+                                    {formatSize(Number(video.compressedSize))}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+                
+                {/* Download Button */}
+                <button
+                    className="w-full flex items-center justify-center space-x-2 bg-white text-black font-medium py-3 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg hover:bg-gray-100"
+                    onClick={() => onDownload(getFullVideoUrl(video.publicId), video.title)}
+                >
+                    <Download size={18} />
+                    <span>Download Video</span>
+                </button>
             </div>
-            <div className="flex justify-between items-center mt-4">
-              <div className="text-sm font-semibold">
-                Compression:{" "}
-                <span className="text-accent">{compressionPercentage}%</span>
-              </div>
-              <button
-                className="btn btn-primary btn-sm"
-                onClick={() =>
-                  onDownload(getFullVideoUrl(video.publicId), video.title)
-                }
-              >
-                <Download size={16} />
-              </button>
-            </div>
-          </div>
         </div>
       );
 }
