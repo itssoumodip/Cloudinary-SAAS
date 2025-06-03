@@ -24,6 +24,12 @@ interface CloudinaryUploadResult {
     [key: string]: any;
 }
 
+interface CloudinaryResponse {
+    secure_url: string;
+    public_id: string;
+    [key: string]: unknown;
+}
+
 export async function POST(request: NextRequest) {
     try {
         const { userId } = await auth();
