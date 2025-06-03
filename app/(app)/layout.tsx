@@ -71,15 +71,17 @@ export default function AppLayout({
                 <>
                   <div className="avatar">
                     <div className="w-8 h-8 rounded-full ring-2 ring-white/30">
-                      <Image
-                        src={user.imageUrl}
-                        alt={
-                          user.username || user.emailAddresses[0].emailAddress
-                        }
-                        width={32}
-                        height={32}
-                        className="rounded-full"
-                      />
+                      {user.imageUrl && (
+                        <Image
+                          src={user.imageUrl}
+                          alt={user.username || (user.emailAddresses?.[0]?.emailAddress || "User")}
+                          width={32}
+                          height={32}
+                          className="rounded-full"
+                          priority
+                          unoptimized
+                        />
+                      )}
                     </div>
                   </div>
                   

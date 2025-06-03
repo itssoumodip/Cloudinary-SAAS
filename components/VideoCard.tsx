@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import relativeTime from "dayjs/plugin/relativeTime"
 import {filesize} from "filesize"
 import { Video } from '@/types';
+import Image from 'next/image';
 
 dayjs.extend(relativeTime);
 
@@ -15,7 +16,6 @@ interface VideoCardProps {
 
 const VideoCard: React.FC<VideoCardProps> = ({video, onDownload}) => {
     const [isHovered, setIsHovered] = useState(false);
-    const [previewError, setPreviewError] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     const getThumbnailUrl = useCallback((publicId: string) => {
@@ -75,12 +75,10 @@ const VideoCard: React.FC<VideoCardProps> = ({video, onDownload}) => {
       const compressionPercentage = Math.round(
         (1 - Number(video.compressedSize) / Number(video.originalSize)) * 100
       );      useEffect(() => {
-        setPreviewError(false);
         setIsLoading(true);
       }, [isHovered]);
 
       const handlePreviewError = () => {
-        setPreviewError(true);
         setIsLoading(false);
       };
       
@@ -123,10 +121,12 @@ const VideoCard: React.FC<VideoCardProps> = ({video, onDownload}) => {
                                 <Play size={28} className="text-white ml-1" />
                             </div>
                         </div>
-                        <img
-                            src={getThumbnailUrl(video.publicId)}
-                            alt={video.title}
-                            className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                        <Image 
+                          src={getThumbnailUrl(video.publicId)} 
+                          alt={video.title} 
+                          width={320} 
+                          height={180} 
+                          className="w-full h-full object-cover" 
                         />
                     </>
                 )}

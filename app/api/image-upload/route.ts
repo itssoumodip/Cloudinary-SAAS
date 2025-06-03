@@ -85,3 +85,6 @@ export async function POST(request: NextRequest) {
         );
     }
 }
+
+// Example fix for the suggested change
+// const data: { secure_url: string; public_id: string } = await response.json();
