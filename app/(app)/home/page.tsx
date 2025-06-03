@@ -145,7 +145,7 @@ function Home() {
                     <div className="text-center max-w-md">
                         <h3 className="text-2xl font-bold text-white mb-2">No matching videos</h3>
                         <p className="text-gray-400">
-                            We couldn't find any videos matching "{searchTerm}". Try a different search term.
+                            We couldn&apos;t find any videos matching &quot;{searchTerm}&quot;. Try a different search term.
                         </p>
                         <button
                             className="mt-4 px-6 py-2 bg-gray-900 hover:bg-gray-800 rounded-lg transition duration-200 text-white border border-gray-700"
