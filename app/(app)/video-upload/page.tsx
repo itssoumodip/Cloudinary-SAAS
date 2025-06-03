@@ -77,66 +77,92 @@ const VideoUpload = () => {
         }
     };
 
-    return (
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setFile(e.target.files[0]);
+        }
+    };
+
+  return (
         <div className="container mx-auto p-4 max-w-2xl">
-          <div className="bg-black border border-gray-800 rounded-xl shadow-lg p-6">
+          <div className="glass-panel p-8">
             <h1 className="text-2xl font-bold mb-6 text-white text-center">Upload Video</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-400 mb-1.5">
                   Title
                 </label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="input w-full bg-gray-900 border-gray-700 text-white focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
+                  className="glass-input"
                   required
                   placeholder="Enter video title"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-400 mb-1.5">
                   Description
                 </label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="textarea w-full bg-gray-900 border-gray-700 text-white focus:border-gray-500 focus:ring-1 focus:ring-gray-500 min-h-[120px]"
+                  className="glass-input min-h-[120px]"
                   placeholder="Enter video description"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-400 mb-1.5">
                   Video File
                 </label>
                 <div 
-                  className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer ${
-                    dragActive ? "border-white bg-gray-900" : "border-gray-700 hover:border-gray-500"
-                  }`}
+                  className={`file-drop-area ${dragActive ? 'drag-active' : ''}`}
                   onDragEnter={handleDrag}
                   onDragOver={handleDrag}
                   onDragLeave={handleDrag}
                   onDrop={handleDrop}
                 >
-                  <UploadCloudIcon className="w-12 h-12 text-gray-400 mb-2" />
-                  <p className="text-sm text-gray-300 text-center mb-4">
+                  <UploadCloudIcon className="w-12 h-12 text-gray-500 mx-auto mb-3" />
+                  <p className="text-sm text-gray-400 mb-4">
                     Drag and drop your video here, or click to browse
                   </p>
-                  <input
-                    type="file"
-                    accept="video/*"
-                    onChange={(e) => setFile(e.target.files?.[0] || null)}
-                    className="file-input file-input-bordered w-full bg-gray-800 border-gray-700 text-white"
-                    required={!file}
-                  />
+                  <div className="relative w-full">
+                    <input
+                      id="fileInput"
+                      type="file"
+                      accept="video/*"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                    {!file && (
+                      <div className="flex flex-col items-center space-y-2">
+                        <label
+                          htmlFor="fileInput"
+                          className="px-5 py-2.5 rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 text-sm cursor-pointer transition-all hover:bg-gray-700/50"
+                        >
+                          Choose File
+                        </label>
+                        <span className="text-sm text-gray-500">No file chosen</span>
+                      </div>
+                    )}
+                  </div>
+                  
                   {file && (
-                    <div className="mt-4 w-full">
+                    <div className="mt-4 w-full px-4 py-3 rounded-lg bg-gray-800/30 border border-gray-700/50">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-white truncate max-w-[300px]">{file.name}</span>
-                        <span className="text-xs text-gray-400">
-                          {(file.size / (1024 * 1024)).toFixed(2)} MB
-                        </span>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-sm text-gray-300 truncate max-w-[200px]">{file.name}</span>
+                          <span className="text-xs text-gray-500 font-mono">
+                            {(file.size / (1024 * 1024)).toFixed(2)} MB
+                          </span>
+                        </div>
+                        <label
+                          htmlFor="fileInput"
+                          className="text-xs text-gray-400 hover:text-gray-300 cursor-pointer"
+                        >
+                          Change
+                        </label>
                       </div>
                     </div>
                   )}
@@ -150,13 +176,13 @@ const VideoUpload = () => {
               </div>
               {isUploading && (
                 <div className="w-full mt-4">
-                  <div className="flex justify-between mb-1 text-sm">
-                    <span className="text-gray-300">Uploading...</span>
-                    <span className="text-gray-300">{uploadProgress}%</span>
+                  <div className="flex justify-between mb-1.5 text-sm">
+                    <span className="text-gray-400">Uploading...</span>
+                    <span className="text-gray-400">{uploadProgress}%</span>
                   </div>
-                  <div className="w-full bg-gray-800 rounded-full h-2">
+                  <div className="w-full bg-gray-800/50 rounded-full h-1.5">
                     <div 
-                      className="bg-white h-2 rounded-full" 
+                      className="bg-gray-400 h-1.5 rounded-full transition-all duration-300" 
                       style={{ width: `${uploadProgress}%` }}
                     ></div>
                   </div>
@@ -164,7 +190,7 @@ const VideoUpload = () => {
               )}
               <button
                 type="submit"
-                className="btn w-full bg-white text-black hover:bg-gray-300 focus:outline-none disabled:bg-gray-600 disabled:text-gray-400 mt-4"
+                className="w-full mt-6 px-6 py-3 rounded-lg bg-gray-800/80 border border-gray-700/50 text-white font-medium transition-all hover:bg-gray-700/80 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-800/80"
                 disabled={isUploading || !file || file.size > MAX_FILE_SIZE}
               >
                 {isUploading ? "Uploading..." : "Upload Video"}

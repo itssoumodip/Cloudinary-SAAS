@@ -61,7 +61,7 @@ export default function AppLayout({
             </div>
             <div className="flex-1">
               <Link href="/" onClick={handleLogoClick}>
-                <div className="btn btn-ghost normal-case text-2xl font-bold tracking-tight cursor-pointer text-white">
+                <div className="btn btn-ghost normal-case sm:text-2xl text-md font-bold tracking-tight cursor-pointer text-white">
                   Cloudinary Showcase
                 </div>
               </Link>
@@ -79,9 +79,7 @@ export default function AppLayout({
                       />
                     </div>
                   </div>
-                  <span className="text-sm truncate max-w-xs lg:max-w-md text-gray-300">
-                    {user.username || user.emailAddresses[0].emailAddress}
-                  </span>
+                  
                   <button
                     onClick={handleSignOut}
                     className="btn btn-ghost btn-circle text-gray-300 hover:text-white"
@@ -103,9 +101,7 @@ export default function AppLayout({
       <div className="drawer-side">
         <label htmlFor="sidebar-drawer" className="drawer-overlay"></label>
         <aside className="bg-black w-64 h-full flex flex-col border-r border-gray-800">
-          <div className="flex items-center justify-center py-6">
-            <ImageIcon className="w-10 h-10 text-white" />
-          </div>
+         
           <ul className="menu p-4 w-full text-gray-300 flex-grow">
             {sidebarItems.map((item) => (
               <li key={item.href} className="mb-2">
