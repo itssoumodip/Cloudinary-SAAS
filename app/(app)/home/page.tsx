@@ -44,6 +44,17 @@ function Home() {
         document.body.removeChild(link);
     }, [])
 
+    const handleDelete = useCallback(async (videoId: string, publicId: string) => {
+        try {
+            await axios.delete(`/api/video-delete?videoId=${videoId}&publicId=${publicId}`);
+            // Refresh the videos list after successful deletion
+            fetchVideos();
+        } catch (error) {
+            console.error('Failed to delete video:', error);
+            throw error;
+        }
+    }, [fetchVideos]);
+
     // Filter videos based on search term
     const filteredVideos = videos.filter(video => 
         video.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -156,9 +167,14 @@ function Home() {
                     </div>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
                     {filteredVideos.map((video) => (
-                        <VideoCard key={video.id} video={video} onDownload={handleDownload} />
+                        <VideoCard 
+                            key={video.id} 
+                            video={video} 
+                            onDownload={handleDownload}
+                            onDelete={handleDelete}
+                        />
                     ))}
                 </div>
             )}

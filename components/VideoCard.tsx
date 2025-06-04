@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react'
 import {getCldImageUrl, getCldVideoUrl} from "next-cloudinary"
-import { Download, Clock, FileDown, FileUp, Play, ArrowDown } from "lucide-react";
+import { Download, Clock, FileDown, FileUp, Play, ArrowDown, Trash2 } from "lucide-react";
 import dayjs from 'dayjs';
 import relativeTime from "dayjs/plugin/relativeTime"
 import {filesize} from "filesize"
@@ -12,11 +12,13 @@ dayjs.extend(relativeTime);
 interface VideoCardProps {
     video: Video;
     onDownload: (url: string, title: string) => void;
+    onDelete?: (videoId: string, publicId: string) => void;
 }
 
-const VideoCard: React.FC<VideoCardProps> = ({video, onDownload}) => {
+const VideoCard: React.FC<VideoCardProps> = ({video, onDownload, onDelete}) => {
     const [isHovered, setIsHovered] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const getThumbnailUrl = useCallback((publicId: string) => {
         return getCldImageUrl({
@@ -85,6 +87,22 @@ const VideoCard: React.FC<VideoCardProps> = ({video, onDownload}) => {
       const handlePreviewLoad = () => {
         setIsLoading(false);
       };
+
+      const handleDelete = async () => {
+        if (!onDelete || isDeleting) return;
+        
+        if (window.confirm('Are you sure you want to delete this video?')) {
+            setIsDeleting(true);
+            try {
+                await onDelete(video.id, video.publicId);
+            } catch (error) {
+                console.error('Failed to delete video:', error);
+                alert('Failed to delete video');
+            } finally {
+                setIsDeleting(false);
+            }
+        }
+    };
 
       return (
         <div
@@ -198,6 +216,49 @@ const VideoCard: React.FC<VideoCardProps> = ({video, onDownload}) => {
                     <Download size={18} />
                     <span>Download Video</span>
                 </button>
+
+                {/* Delete Button */}
+                {onDelete && (
+                    <button
+                        className="w-full flex items-center justify-center space-x-2 bg-red-600 text-white font-medium py-3 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg hover:bg-red-500 mt-3"
+                        onClick={handleDelete}
+                        disabled={isDeleting}
+                    >
+                        {isDeleting ? (
+                            <div className="flex items-center">
+                                <div className="w-4 h-4 border-4 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                                <span>Deleting...</span>
+                            </div>
+                        ) : (
+                            <>
+                                <Trash2 size={18} />
+                                <span>Delete Video</span>
+                            </>
+                        )}
+                    </button>
+                )}
+
+                {/* Action Buttons */}
+                <div className="flex justify-between items-center mt-4">
+                    <button
+                        onClick={() => onDownload(getFullVideoUrl(video.publicId), video.title)}
+                        className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                    >
+                        <Download size={16} />
+                        <span>Download</span>
+                    </button>
+
+                    {onDelete && (
+                        <button
+                            onClick={handleDelete}
+                            disabled={isDeleting}
+                            className="flex items-center space-x-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <Trash2 size={16} />
+                            <span>{isDeleting ? 'Deleting...' : 'Delete'}</span>
+                        </button>
+                    )}
+                </div>
             </div>
         </div>
       );
