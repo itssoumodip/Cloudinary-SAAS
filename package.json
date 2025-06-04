@@ -1,7 +1,8 @@
 {
   "name": "cloudinary-saas",
   "version": "0.1.0",
-  "private": true,  "scripts": {
+  "private": true,
+  "scripts": {
     "dev": "next dev --turbopack",
     "build": "prisma generate && next build",
     "start": "next start",
@@ -12,6 +13,7 @@
     "@clerk/nextjs": "^6.20.0",
     "@prisma/client": "^6.8.2",
     "axios": "^1.9.0",
+    "clerk": "^0.8.3",
     "cloudinary": "^2.6.1",
     "daisyui": "^5.0.43",
     "dayjs": "^1.11.13",
