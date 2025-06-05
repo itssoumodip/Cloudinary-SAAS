@@ -2,8 +2,6 @@
 
 A Next.js application for advanced media management with Cloudinary integration. This application provides tools for video compression, image optimization, and social media asset creation.
 
-![Cloudinary Showcase](https://res.cloudinary.com/demo/image/upload/c_scale,w_700/v1612371119/cloudinary-logo-vector.svg)
-
 ### Key Features
 
 - **Video Compression**: Automatically compress videos while maintaining clarity, saving bandwidth and storage

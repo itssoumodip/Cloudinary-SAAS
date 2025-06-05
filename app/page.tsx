@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { FileVideo2, Share2Icon, Upload, ArrowRight } from "lucide-react";
 
