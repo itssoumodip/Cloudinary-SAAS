@@ -4,8 +4,12 @@ import { FileVideo2, Share2Icon, Upload, ArrowRight } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black to-gray-900">
-      <div className="container mx-auto px-4 py-16 flex flex-col items-center">
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      {/* Background elements */}
+      <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+      
+      <div className="container mx-auto px-4 py-16 flex flex-col items-center relative z-10">
         {/* Hero Section */}
         <div className="w-full max-w-5xl text-center mb-16">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white">
@@ -66,11 +70,10 @@ export default function Home() {
             <p className="text-gray-400">
               Store all your media files securely in the cloud. Access and manage them from anywhere with our intuitive dashboard.
             </p>
-          </div>
-        </div>
+          </div>        </div>
 
         {/* CTA Section */}
-        <div className="w-full max-w-4xl bg-gradient-to-r from-blue-900/40 to-purple-900/40 p-8 md:p-12 rounded-2xl border border-gray-800">
+        <div className="w-full max-w-4xl bg-gradient-to-r from-blue-900/40 to-purple-900/40 p-8 md:p-12 rounded-2xl border border-gray-800 mb-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">Ready to get started?</h2>
@@ -86,8 +89,7 @@ export default function Home() {
               <ArrowRight size={18} />
             </Link>
           </div>
-        </div>
-      </div>
+        </div>      </div>
     </div>
   );
 }
