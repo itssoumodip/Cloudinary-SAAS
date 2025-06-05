@@ -123,8 +123,8 @@ const socialFormats = {
 
 
     return (
-        <div className="container mx-auto p-4 max-w-4xl">
-          <div className="bg-black border border-gray-800 rounded-xl shadow-lg p-6">
+        <div className="container mx-auto max-w-4xl">
+          <div className="bg-black border border-gray-800 rounded-xl shadow-lg p-3">
             <h1 className="text-3xl font-bold mb-6 text-white text-center">
               Social Media Image Creator
             </h1>

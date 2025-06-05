@@ -84,8 +84,8 @@ const VideoUpload = () => {
     };
 
   return (
-        <div className="container mx-auto p-4 max-w-2xl">
-          <div className="glass-panel p-8">
+        <div className="container mx-auto max-w-2xl">
+          <div className="glass-panel p-3">
             <h1 className="text-2xl font-bold mb-6 text-white text-center">Upload Video</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>

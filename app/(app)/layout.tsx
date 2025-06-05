@@ -47,7 +47,7 @@ export default function AppLayout({
         checked={sidebarOpen}
         onChange={() => setSidebarOpen(!sidebarOpen)}
       />
-      <div className="drawer-content flex flex-col">
+      <div className="drawer-content bg-black flex flex-col">
         {/* Navbar */}
         <header className="w-full bg-black border-b border-gray-800">
           <div className="navbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

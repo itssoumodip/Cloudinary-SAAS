@@ -207,42 +207,13 @@ const VideoCard: React.FC<VideoCardProps> = ({video, onDownload, onDelete}) => {
                         </div>
                     </div>
                 </div>                
-                
-                {/* Download Button */}
-                <button
-                    className="w-full flex items-center justify-center space-x-2 bg-white text-black font-medium py-3 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg hover:bg-gray-100"
-                    onClick={() => onDownload(getFullVideoUrl(video.publicId), video.title)}
-                >
-                    <Download size={18} />
-                    <span>Download Video</span>
-                </button>
-
-                {/* Delete Button */}
-                {onDelete && (
-                    <button
-                        className="w-full flex items-center justify-center space-x-2 bg-red-600 text-white font-medium py-3 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg hover:bg-red-500 mt-3"
-                        onClick={handleDelete}
-                        disabled={isDeleting}
-                    >
-                        {isDeleting ? (
-                            <div className="flex items-center">
-                                <div className="w-4 h-4 border-4 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                                <span>Deleting...</span>
-                            </div>
-                        ) : (
-                            <>
-                                <Trash2 size={18} />
-                                <span>Delete Video</span>
-                            </>
-                        )}
-                    </button>
-                )}
+            
 
                 {/* Action Buttons */}
                 <div className="flex justify-between items-center mt-4">
                     <button
                         onClick={() => onDownload(getFullVideoUrl(video.publicId), video.title)}
-                        className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                        className="flex items-center space-x-2 px-4 py-2 bg-white hover:bg-gray-300 text-black rounded-lg transition-colors"
                     >
                         <Download size={16} />
                         <span>Download</span>

@@ -1,3 +1,4 @@
+import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 import { PrismaClient } from '@/generated/prisma';
@@ -24,15 +25,19 @@ export async function POST(request: NextRequest) {
 
     try {
 
-        //todo to check user
+        // Check user authentication
+        const { userId } = await auth();
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
 
-    if(
-        !process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ||
-        !process.env.CLOUDINARY_API_KEY ||
-        !process.env.CLOUDINARY_API_SECRET
-    ){
-        return NextResponse.json({error: "Cloudinary credentials not found"}, {status: 500})
-    }
+        if(
+            !process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ||
+            !process.env.CLOUDINARY_API_KEY ||
+            !process.env.CLOUDINARY_API_SECRET
+        ){
+            return NextResponse.json({error: "Cloudinary credentials not found"}, {status: 500})
+        }
 
 
         const formData = await request.formData();
@@ -43,6 +48,11 @@ export async function POST(request: NextRequest) {
 
         if(!file){
             return NextResponse.json({error: "File not found"}, {status: 400})
+        }
+
+        // Validate file size (70MB limit as per frontend)
+        if (file.size > 70 * 1024 * 1024) {
+            return NextResponse.json({ error: "File size exceeds 70MB limit" }, { status: 400 });
         }
 
         const bytes = await file.arrayBuffer()
@@ -59,13 +69,17 @@ export async function POST(request: NextRequest) {
                         ]
                     },
                     (error, result) => {
-                        if(error) reject(error);
+                        if(error) {
+                            console.error("Cloudinary upload failed:", error);
+                            reject(error);
+                        }
                         else resolve(result as CloudinaryUploadResult);
                     }
                 )
                 uploadStream.end(buffer)
             }
         )
+
         const video = await prisma.video.create({
             data: {
                 title,
@@ -74,13 +88,17 @@ export async function POST(request: NextRequest) {
                 originalSize: originalSize,
                 compressedSize: String(result.bytes),
                 duration: result.duration || 0,
+                userId: userId,
             }
         })
         return NextResponse.json(video)
 
     } catch (error) {
-        console.log("UPload video failed", error)
-        return NextResponse.json({error: "UPload video failed"}, {status: 500})
+        console.error("Upload video failed:", error)
+        return NextResponse.json({
+            error: "Upload video failed. Please try again.",
+            details: error instanceof Error ? error.message : "Unknown error"
+        }, {status: 500})
     } finally{
         await prisma.$disconnect()
     }
